@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AudioLab Kids — Unit 1 Fun in Class (Fixed)</title>
+<style>
+  :root{
+    --forest:#4a5d23; --forest-dark:#2f3d14; --terracotta:#c1502e; --terracotta-dark:#8a3719;
+    --cream:#f5f1e8; --cream-dark:#e8dfc9; --gold:#d4a574; --gold-dark:#a67c4a;
+    --green-ok:#2d6a4f; --green-light:#e8f5ee; --red-bad:#9d2b1f; --red-light:#f8e5e0;
+    --ink:#2b2b2b; --muted:#7a7566; --card:#fdfcf8;
+    --shadow:0 8px 24px rgba(74,93,35,0.15);
+    --radius:20px;
+    font-family:'Segoe UI',system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--cream);color:var(--ink);}
+  body{min-height:100vh;}
+
+  header.topbar{background:linear-gradient(135deg,var(--forest-dark) 0%, var(--forest) 100%);color:#fff;padding:16px 18px 12px;position:sticky;top:0;z-index:50;box-shadow:0 4px 18px rgba(0,0,0,.3);}
+  .topbar-inner{max-width:1100px;margin:0 auto;}
+  .badge{display:inline-block;background:var(--terracotta);color:#fff;font-size:11px;font-weight:700;letter-spacing:1px;padding:5px 12px;border-radius:20px;text-transform:uppercase;margin-bottom:8px;}
+  header.topbar h1{margin:0 0 4px;font-size:clamp(18px,3.6vw,26px);}
+  header.topbar p{margin:0 0 12px;color:#d4c9a8;font-size:13px;}
+  nav.phasenav{display:flex;gap:6px;flex-wrap:wrap;}
+  nav.phasenav button{flex:1 1 100px;background:rgba(255,255,255,0.08);border:1px solid rgba(212,165,116,0.3);color:#e8dfc9;padding:8px 6px;border-radius:10px;font-size:10.5px;font-weight:600;cursor:pointer;transition:.2s;text-align:center;}
+  nav.phasenav button .num{display:block;font-size:9px;font-weight:800;color:var(--gold);letter-spacing:1px;margin-bottom:2px;}
+  nav.phasenav button.active{background:var(--terracotta);border-color:var(--terracotta);color:#fff;}
+  nav.phasenav button:hover:not(.active){background:rgba(212,165,116,0.2);}
+  .progress-outer{height:6px;background:rgba(212,165,116,0.25);border-radius:6px;margin-top:10px;overflow:hidden;}
+  .progress-inner{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--terracotta));transition:width .4s ease;}
+
+  main{max-width:1100px;margin:0 auto;padding:26px 18px 70px;}
+  .phase{display:none;animation:fadeIn .4s ease;}
+  .phase.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  .phase-title{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .phase-title .bar{width:5px;height:26px;background:var(--terracotta);border-radius:3px;}
+  .phase-title h2{margin:0;font-size:clamp(19px,3.2vw,25px);color:var(--forest-dark);}
+  .phase-sub{color:var(--muted);margin:0 0 22px;font-size:14.5px;max-width:760px;}
+
+  .al-panel{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px 24px;max-width:920px;margin:0 auto;border:1px solid var(--cream-dark);text-align:center;}
+  .al-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+  .al-num{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.5px;background:var(--cream);padding:5px 12px;border-radius:20px;}
+  .al-score-box{display:flex;gap:14px;align-items:center;background:var(--cream);padding:6px 16px;border-radius:20px;font-weight:800;font-size:13px;}
+  .al-score-box .good{color:var(--green-ok);}
+  .al-score-box .bad{color:var(--red-bad);}
+
+  .al-context{background:var(--cream);border-left:4px solid var(--terracotta);border-radius:8px;padding:10px 14px;margin-bottom:16px;text-align:left;font-size:12px;color:var(--forest-dark);font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+  .al-context strong{color:var(--terracotta-dark);}
+
+  .al-instruction{font-size:16px;color:var(--forest-dark);font-weight:700;margin-bottom:6px;}
+  .al-subinstruction{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:20px;}
+
+  .big-word-card{background:linear-gradient(160deg,#fff8e8,#ffe9c4);border:4px dashed var(--gold);border-radius:20px;padding:20px 24px;margin:8px 0 18px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .big-word-card .word-display{font-size:clamp(34px,7vw,54px);font-weight:900;color:var(--terracotta-dark);letter-spacing:1px;line-height:1.1;}
+  .big-word-card .word-hint{font-size:14px;color:var(--muted);font-weight:700;font-style:italic;}
+
+  .al-big-speak{width:100px;height:100px;border-radius:50%;background:var(--forest);color:#fff;border:none;font-size:42px;cursor:pointer;box-shadow:0 10px 26px rgba(74,93,35,.4);transition:.15s;margin:8px 0 14px;}
+  .al-big-speak:hover{transform:scale(1.08);background:var(--terracotta);}
+  .al-big-speak:active{transform:scale(0.95);}
+  .al-big-speak.pulsing{animation:pulseBig 2s infinite;}
+  @keyframes pulseBig{0%{box-shadow:0 0 0 0 rgba(74,93,35,.6);}70%{box-shadow:0 0 0 20px rgba(74,93,35,0);}100%{box-shadow:0 0 0 0 rgba(74,93,35,0);}}
+
+  .al-images{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:14px;}
+  .al-img-card{background:#fff;border:4px solid var(--cream-dark);border-radius:20px;padding:10px;cursor:pointer;transition:.15s;aspect-ratio:1;display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;box-shadow:0 4px 10px rgba(0,0,0,0.05);}
+  .al-img-card svg{width:100%;height:100%;display:block;}
+  .al-img-card:hover{border-color:var(--terracotta);transform:scale(1.03);}
+  .al-img-card.correct{border-color:var(--green-ok);background:var(--green-light);animation:pop .4s ease;box-shadow:0 0 0 6px rgba(45,106,79,.3);}
+  .al-img-card.wrong{border-color:var(--red-bad);background:var(--red-light);animation:shake .4s ease;opacity:0.6;}
+  @keyframes pop{0%{transform:scale(1);}50%{transform:scale(1.1);}100%{transform:scale(1);}}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-10px);}75%{transform:translateX(10px);}}
+
+  .al-options{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px;}
+  .al-opt{background:#faf7f0;border:2px solid var(--cream-dark);border-radius:14px;padding:14px 18px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:12px;font-weight:600;font-size:15px;text-align:left;line-height:1.4;}
+  .al-opt:hover{border-color:var(--terracotta);background:#f5ede0;}
+  .al-opt .lo-letter{display:inline-flex;align-items:center;justify-content:center;min-width:30px;height:30px;background:var(--forest);color:#fff;border-radius:50%;font-weight:800;font-size:13px;flex-shrink:0;}
+  .al-opt.correct{background:var(--green-light);border-color:var(--green-ok);animation:pop .3s ease;}
+  .al-opt.correct .lo-letter{background:var(--green-ok);}
+  .al-opt.wrong{background:var(--red-light);border-color:var(--red-bad);animation:shake .3s ease;}
+  .al-opt.wrong .lo-letter{background:var(--red-bad);}
+
+  .tf-buttons{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px;}
+  .tf-btn{background:#faf7f0;border:3px solid var(--cream-dark);border-radius:16px;padding:24px 16px;font-size:22px;font-weight:800;cursor:pointer;transition:.15s;color:var(--forest-dark);}
+  .tf-btn:hover{border-color:var(--terracotta);transform:scale(1.02);}
+  .tf-btn.correct{background:var(--green-light);border-color:var(--green-ok);color:var(--green-ok);animation:pop .3s ease;}
+  .tf-btn.wrong{background:var(--red-light);border-color:var(--red-bad);color:var(--red-bad);animation:shake .3s ease;}
+
+  .al-feedback{margin-top:20px;font-weight:800;font-size:15px;min-height:26px;}
+  .al-feedback.ok{color:var(--green-ok);}
+  .al-feedback.bad{color:var(--red-bad);}
+
+  .dictation-input{width:100%;max-width:640px;padding:16px 20px;font-size:16px;border:3px solid var(--cream-dark);border-radius:12px;background:#faf7f0;color:var(--forest-dark);font-weight:600;outline:none;transition:.15s;font-family:inherit;}
+  .dictation-input:focus{border-color:var(--terracotta);background:#fff;}
+  .dictation-input.correct{border-color:var(--green-ok);background:var(--green-light);}
+  .dictation-input.wrong{border-color:var(--red-bad);background:var(--red-light);animation:shake .3s ease;}
+  .check-btn{background:var(--forest);color:#fff;border:none;padding:14px 32px;border-radius:12px;font-weight:800;font-size:15px;cursor:pointer;margin-top:14px;transition:.15s;}
+  .check-btn:hover{background:var(--terracotta);}
+  .check-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+  .section-complete{text-align:center;padding:30px 20px;}
+  .section-complete h3{font-size:26px;margin:0 0 10px;}
+  .section-complete.pass h3{color:var(--green-ok);}
+  .section-complete.fail h3{color:var(--red-bad);}
+  .section-complete .score-big{font-size:58px;font-weight:900;color:var(--terracotta);margin:10px 0;}
+  .section-complete .score-sub{color:var(--muted);font-size:14px;margin-bottom:20px;}
+
+  .nav-btn{background:var(--forest);color:#fff;border:none;padding:12px 24px;border-radius:10px;font-weight:700;cursor:pointer;font-size:14px;transition:.15s;}
+  .nav-btn:hover{background:var(--terracotta);}
+  .restart-btn{background:var(--gold);border:none;color:var(--forest-dark);padding:13px 28px;border-radius:10px;font-weight:800;cursor:pointer;font-size:14.5px;margin-top:10px;}
+
+  .final-wrap{max-width:750px;margin:0 auto;text-align:center;}
+  .final-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:36px 24px;border:1px solid var(--cream-dark);}
+  .final-card h3{font-size:24px;color:var(--forest-dark);margin:0 0 4px;}
+  .final-score-big{font-size:64px;font-weight:900;color:var(--terracotta);margin-bottom:4px;}
+  .final-score-sub{color:var(--muted);font-size:13px;margin-bottom:20px;}
+  .final-breakdown{display:flex;flex-direction:column;gap:12px;text-align:left;margin-bottom:20px;}
+  .fb-row{display:flex;align-items:center;gap:12px;}
+  .fb-row .fb-label{width:180px;font-size:13px;font-weight:700;color:var(--ink);flex-shrink:0;}
+  .fb-row .fb-bar-outer{flex:1;height:10px;background:var(--cream-dark);border-radius:6px;overflow:hidden;}
+  .fb-row .fb-bar-inner{height:100%;background:linear-gradient(90deg,var(--gold),var(--green-ok));border-radius:6px;}
+  .fb-row .fb-val{width:52px;text-align:right;font-size:12.5px;font-weight:800;color:var(--muted);}
+  .final-message{background:var(--cream);border-left:5px solid var(--terracotta);border-radius:10px;padding:16px;margin:20px 0;text-align:left;font-size:14px;color:var(--forest-dark);font-weight:600;}
+  .final-message.pass{background:var(--green-light);border-color:var(--green-ok);}
+  .final-message.fail{background:var(--red-light);border-color:var(--red-bad);}
+
+  footer.bottom{text-align:center;color:var(--muted);font-size:12px;padding:20px;}
+  footer.bottom span{color:var(--terracotta);font-weight:700;}
+
+  @media(max-width:700px){
+    nav.phasenav button{font-size:9.5px;padding:7px 4px;}
+    .al-images{grid-template-columns:1fr 1fr;}
+    .al-big-speak{width:84px;height:84px;font-size:36px;}
+    .fb-row .fb-label{width:100%;}
+    .fb-row{flex-wrap:wrap;}
+    .big-word-card .word-display{font-size:32px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="badge">🎧 AudioLab Kids · Unit 1 — Fun in Class</span>
+    <h1>AudioLab for Kids (Fixed)</h1>
+    <p>Vocabulary · Sentence → Image · True/False · Q&amp;A · Dictation · Fill Gap · Audio lento 🐢</p>
+    <nav class="phasenav" id="phaseNav">
+      <button class="phase-btn active" data-phase="1"><span class="num">LEVEL 1</span>Vocabulary</button>
+      <button class="phase-btn" data-phase="2"><span class="num">LEVEL 2</span>Sentence→Image</button>
+      <button class="phase-btn" data-phase="3"><span class="num">LEVEL 3</span>True/False</button>
+      <button class="phase-btn" data-phase="4"><span class="num">LEVEL 4</span>Q&amp;A</button>
+      <button class="phase-btn" data-phase="5"><span class="num">LEVEL 5</span>Dictation</button>
+      <button class="phase-btn" data-phase="6"><span class="num">LEVEL 6</span>Fill Gap</button>
+      <button class="phase-btn" data-phase="7"><span class="num">LEVEL 7</span>Final Note</button>
+    </nav>
+    <div class="progress-outer"><div class="progress-inner" id="topProgress"></div></div>
+  </div>
+</header>
+
+<main>
+  <section class="phase active" id="phase1">
+    <div class="phase-title"><span class="bar"></span><h2>Level 1 — Vocabulary</h2></div>
+    <p class="phase-sub">📖 Leé la palabra, escuchá el audio despacio y elegí la imagen correcta. ¡Tomate tu tiempo! 🐢</p>
+    <div id="area1"></div>
+  </section>
+  <section class="phase" id="phase2">
+    <div class="phase-title"><span class="bar"></span><h2>Level 2 — Sentence → Image</h2></div>
+    <p class="phase-sub">Escuchá la oración completa y elegí la imagen que la representa. 🎧</p>
+    <div id="area2"></div>
+  </section>
+  <section class="phase" id="phase3">
+    <div class="phase-title"><span class="bar"></span><h2>Level 3 — True or False</h2></div>
+    <p class="phase-sub">Mirá la imagen, escuchá la oración y decidí si es Verdadero o Falso. ✅❌</p>
+    <div id="area3"></div>
+  </section>
+  <section class="phase" id="phase4">
+    <div class="phase-title"><span class="bar"></span><h2>Level 4 — Listen &amp; Answer</h2></div>
+    <p class="phase-sub">Escuchá la pregunta y elegí la respuesta correcta. 🗣️</p>
+    <div id="area4"></div>
+  </section>
+  <section class="phase" id="phase5">
+    <div class="phase-title"><span class="bar"></span><h2>Level 5 — Dictation</h2></div>
+    <p class="phase-sub">Escuchá la oración y escribila. ✍️</p>
+    <div id="area5"></div>
+  </section>
+  <section class="phase" id="phase6">
+    <div class="phase-title"><span class="bar"></span><h2>Level 6 — Fill the Gap</h2></div>
+    <p class="phase-sub">Escuchá la oración completa y elegí la palabra que falta. 🧩</p>
+    <div id="area6"></div>
+  </section>
+  <section class="phase" id="phase7">
+    <div class="phase-title"><span class="bar"></span><h2>Level 7 — Final Note</h2></div>
+    <p class="phase-sub">Tu nota final del AudioLab. Mínimo 80% para aprobar. 🏆</p>
+    <div class="final-wrap" id="finalArea"></div>
+  </section>
+</main>
+
+<footer class="bottom">🎧 AudioLab Kids · Unit 1 · <span>Fun in Class</span></footer>
+
+<script>
+// ============================================================
+// SVG ICONS — REDISEÑADOS 100% CLAROS (Flashcards)
+// ============================================================
+const SVG_ICONS = {
+  reading: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#FFF3E0" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#FFE0B2"/>
+    <path d="M 40 80 Q 70 70 100 90 L 100 160 Q 70 140 40 150 Z" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="4"/>
+    <path d="M 100 90 Q 130 70 160 80 L 160 150 Q 130 140 100 160 Z" fill="#FAFAFA" stroke="#2b2b2b" stroke-width="4"/>
+    <line x1="55" y1="100" x2="85" y2="95" stroke="#2b2b2b" stroke-width="2"/>
+    <line x1="55" y1="115" x2="85" y2="110" stroke="#2b2b2b" stroke-width="2"/>
+    <line x1="55" y1="130" x2="85" y2="125" stroke="#2b2b2b" stroke-width="2"/>
+    <line x1="115" y1="95" x2="145" y2="100" stroke="#2b2b2b" stroke-width="2"/>
+    <line x1="115" y1="110" x2="145" y2="115" stroke="#2b2b2b" stroke-width="2"/>
+    <line x1="115" y1="125" x2="145" y2="130" stroke="#2b2b2b" stroke-width="2"/>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">READING</text>
+  </svg>`,
+
+  counting: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#E3F2FD" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#BBDEFB"/>
+    <text x="45" y="85" font-size="56" font-weight="900" fill="#E26D5C" font-family="Arial">1</text>
+    <text x="100" y="85" font-size="56" font-weight="900" fill="#F0A500" font-family="Arial">2</text>
+    <text x="155" y="85" font-size="56" font-weight="900" fill="#4A7C59" font-family="Arial">3</text>
+    <g transform="translate(60,110)">
+      <rect x="0" y="0" width="16" height="35" rx="8" fill="#FDBE7E" stroke="#2b2b2b" stroke-width="2"/>
+      <rect x="20" y="-10" width="16" height="45" rx="8" fill="#FDBE7E" stroke="#2b2b2b" stroke-width="2"/>
+      <rect x="40" y="-15" width="16" height="50" rx="8" fill="#FDBE7E" stroke="#2b2b2b" stroke-width="2"/>
+      <rect x="60" y="-5" width="16" height="40" rx="8" fill="#FDBE7E" stroke="#2b2b2b" stroke-width="2"/>
+      <rect x="0" y="30" width="80" height="25" rx="10" fill="#FDBE7E" stroke="#2b2b2b" stroke-width="2"/>
+    </g>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">COUNTING</text>
+  </svg>`,
+
+  drawing: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#FFF8E1" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#FFECB3"/>
+    <rect x="30" y="40" width="140" height="110" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="3" rx="6"/>
+    <circle cx="80" cy="80" r="18" fill="#FFC107"/>
+    <g stroke="#FFC107" stroke-width="3" stroke-linecap="round">
+      <line x1="80" y1="50" x2="80" y2="42"/><line x1="80" y1="118" x2="80" y2="110"/>
+      <line x1="50" y1="80" x2="42" y2="80"/><line x1="118" y1="80" x2="110" y2="80"/>
+      <line x1="59" y1="59" x2="53" y2="53"/><line x1="101" y1="59" x2="107" y2="53"/>
+      <line x1="59" y1="101" x2="53" y2="107"/><line x1="101" y1="101" x2="107" y2="107"/>
+    </g>
+    <g transform="rotate(-35 150 120)">
+      <rect x="140" y="90" width="16" height="60" fill="#FFD54F" stroke="#2b2b2b" stroke-width="3"/>
+      <polygon points="140,150 156,150 148,165" fill="#FDBE7E" stroke="#2b2b2b" stroke-width="3"/>
+      <polygon points="144,158 152,158 148,165" fill="#2b2b2b"/>
+      <rect x="140" y="80" width="16" height="12" fill="#E26D5C" stroke="#2b2b2b" stroke-width="3"/>
+    </g>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">DRAWING</text>
+  </svg>`,
+
+  gluing: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#FCE4EC" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#F8BBD0"/>
+    <rect x="30" y="130" width="140" height="40" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="3" rx="4"/>
+    <rect x="50" y="140" width="35" height="20" fill="#87CEEB" stroke="#2b2b2b" stroke-width="2"/>
+    <rect x="115" y="140" width="35" height="20" fill="#FFB6C1" stroke="#2b2b2b" stroke-width="2"/>
+    <g transform="translate(100,50)">
+      <rect x="-25" y="0" width="50" height="70" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="3" rx="10"/>
+      <rect x="-12" y="-20" width="24" height="22" fill="#FF7043" stroke="#2b2b2b" stroke-width="3" rx="4"/>
+      <polygon points="-12,-20 12,-20 6,-32 -6,-32" fill="#FF7043" stroke="#2b2b2b" stroke-width="3"/>
+      <text x="0" y="45" text-anchor="middle" font-size="12" font-weight="900" fill="#E26D5C" font-family="Arial">GLUE</text>
+    </g>
+    <ellipse cx="100" cy="110" rx="6" ry="10" fill="#E0E0E0" stroke="#2b2b2b" stroke-width="2"/>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">GLUING</text>
+  </svg>`,
+
+  coloring: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#F3E5F5" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#E1BEE7"/>
+    <rect x="30" y="40" width="80" height="100" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="3" rx="4"/>
+    <circle cx="60" cy="70" r="14" fill="none" stroke="#2b2b2b" stroke-width="2"/>
+    <circle cx="57" cy="68" r="2" fill="#2b2b2b"/><circle cx="63" cy="68" r="2" fill="#2b2b2b"/>
+    <path d="M 54 75 Q 60 80 66 75" stroke="#2b2b2b" stroke-width="2" fill="none"/>
+    <path d="M 50 105 L 90 105 L 70 125 Z" fill="none" stroke="#2b2b2b" stroke-width="2"/>
+    <g transform="translate(130,50)"><rect width="12" height="50" fill="#E26D5C" stroke="#2b2b2b" stroke-width="2"/><polygon points="0,0 12,0 6,-10" fill="#E26D5C" stroke="#2b2b2b" stroke-width="2"/></g>
+    <g transform="translate(150,50)"><rect width="12" height="50" fill="#4A7C59" stroke="#2b2b2b" stroke-width="2"/><polygon points="0,0 12,0 6,-10" fill="#4A7C59" stroke="#2b2b2b" stroke-width="2"/></g>
+    <g transform="translate(170,50)"><rect width="12" height="50" fill="#F0A500" stroke="#2b2b2b" stroke-width="2"/><polygon points="0,0 12,0 6,-10" fill="#F0A500" stroke="#2b2b2b" stroke-width="2"/></g>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">COLORING</text>
+  </svg>`,
+
+  talking: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#FFF3E0" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#FFE0B2"/>
+    <circle cx="60" cy="110" r="25" fill="#FDBE7E" stroke="#2b2b2b" stroke-width="3"/>
+    <circle cx="52" cy="105" r="4" fill="#2b2b2b"/><circle cx="68" cy="105" r="4" fill="#2b2b2b"/>
+    <ellipse cx="60" cy="118" rx="8" ry="6" fill="#E26D5C"/>
+    <path d="M 50 90 Q 60 80 70 90 L 75 80 Q 60 70 45 80 Z" fill="#5B3A29" stroke="#2b2b2b" stroke-width="2"/>
+    <circle cx="140" cy="110" r="25" fill="#FDBE7E" stroke="#2b2b2b" stroke-width="3"/>
+    <circle cx="132" cy="105" r="4" fill="#2b2b2b"/><circle cx="148" cy="105" r="4" fill="#2b2b2b"/>
+    <ellipse cx="140" cy="118" rx="8" ry="6" fill="#E26D5C"/>
+    <path d="M 130 90 Q 140 80 150 90 L 155 80 Q 140 70 125 80 Z" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="2"/>
+    <ellipse cx="60" cy="55" rx="35" ry="20" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="3"/>
+    <polygon points="50,75 55,85 65,72" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="3"/>
+    <text x="60" y="63" text-anchor="middle" font-size="16" font-weight="900" fill="#4A7C59" font-family="Arial">Hi!</text>
+    <ellipse cx="140" cy="55" rx="35" ry="20" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="3"/>
+    <polygon points="150,75 145,85 135,72" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="3"/>
+    <text x="140" y="63" text-anchor="middle" font-size="16" font-weight="900" fill="#E26D5C" font-family="Arial">Hi!</text>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">TALKING</text>
+  </svg>`,
+
+  erasing: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#E8F5E9" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#C8E6C9"/>
+    <rect x="25" y="40" width="150" height="110" fill="#2E7D32" stroke="#5B3A29" stroke-width="6" rx="6"/>
+    <text x="50" y="80" font-size="28" font-weight="900" fill="#FFFFFF" font-family="Arial">A B C</text>
+    <text x="50" y="120" font-size="24" font-weight="900" fill="#FFFFFF" font-family="Arial">1 2 3</text>
+    <g transform="rotate(-15 130 120)">
+      <rect x="100" y="105" width="70" height="35" fill="#FFB6C1" stroke="#2b2b2b" stroke-width="3" rx="4"/>
+      <rect x="100" y="105" width="70" height="12" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="3" rx="4"/>
+    </g>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">ERASING</text>
+  </svg>`,
+
+  listening: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#FFF3E0" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#FFE0B2"/>
+    <path d="M 60 50 Q 130 50 130 100 Q 130 140 110 160 Q 90 180 60 170 Z" fill="#FDBE7E" stroke="#2b2b2b" stroke-width="3"/>
+    <path d="M 60 50 Q 130 50 130 80 Q 110 60 80 65 Q 55 70 55 95 Q 50 70 60 50 Z" fill="#5B3A29" stroke="#2b2b2b" stroke-width="3"/>
+    <path d="M 75 95 Q 65 90 60 105 Q 55 125 70 130 Q 85 135 85 115 Q 88 100 75 95 Z" fill="#FDBE7E" stroke="#2b2b2b" stroke-width="3"/>
+    <path d="M 72 105 Q 68 110 70 118" stroke="#2b2b2b" stroke-width="2" fill="none"/>
+    <circle cx="105" cy="95" r="5" fill="#2b2b2b"/>
+    <path d="M 140 80 Q 155 100 140 120" stroke="#E26D5C" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M 155 65 Q 178 100 155 135" stroke="#E26D5C" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M 170 50 Q 198 100 170 150" stroke="#E26D5C" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.6"/>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">LISTENING</text>
+  </svg>`,
+
+  glue: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#FFF8E1" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#FFECB3"/>
+    <rect x="65" y="60" width="70" height="100" fill="#FFC107" stroke="#2b2b2b" stroke-width="4" rx="12"/>
+    <rect x="65" y="60" width="70" height="30" fill="#E26D5C" stroke="#2b2b2b" stroke-width="4" rx="12"/>
+    <rect x="75" y="40" width="50" height="25" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="4" rx="6"/>
+    <circle cx="100" cy="52" r="6" fill="#E0E0E0" stroke="#2b2b2b" stroke-width="2"/>
+    <text x="100" y="130" text-anchor="middle" font-size="20" font-weight="900" fill="#FFFFFF" font-family="Arial">GLUE</text>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">GLUE</text>
+  </svg>`,
+
+  paintbrush: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#FCE4EC" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#F8BBD0"/>
+    <rect x="90" y="20" width="20" height="90" fill="#5B3A29" stroke="#2b2b2b" stroke-width="3" rx="4"/>
+    <rect x="85" y="105" width="30" height="15" fill="#B0BEC5" stroke="#2b2b2b" stroke-width="3" rx="2"/>
+    <path d="M 85 120 L 115 120 L 120 170 Q 100 185 80 170 Z" fill="#E26D5C" stroke="#2b2b2b" stroke-width="3"/>
+    <path d="M 88 170 Q 100 185 112 170" fill="#FFC107" stroke="#2b2b2b" stroke-width="3"/>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">PAINTBRUSH</text>
+  </svg>`,
+
+  notebook: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#E3F2FD" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#BBDEFB"/>
+    <rect x="50" y="40" width="100" height="120" fill="#5B8DB8" stroke="#2b2b2b" stroke-width="4" rx="6"/>
+    <rect x="60" y="50" width="80" height="100" fill="#FFFFFF" stroke="#2b2b2b" stroke-width="2" rx="3"/>
+    <line x1="70" y1="70" x2="130" y2="70" stroke="#5B8DB8" stroke-width="2"/>
+    <line x1="70" y1="90" x2="130" y2="90" stroke="#5B8DB8" stroke-width="2"/>
+    <line x1="70" y1="110" x2="130" y2="110" stroke="#5B8DB8" stroke-width="2"/>
+    <line x1="70" y1="130" x2="110" y2="130" stroke="#5B8DB8" stroke-width="2"/>
+    <g fill="none" stroke="#2b2b2b" stroke-width="3">
+      <path d="M 50 55 Q 40 60 50 65"/><path d="M 50 75 Q 40 80 50 85"/>
+      <path d="M 50 95 Q 40 100 50 105"/><path d="M 50 115 Q 40 120 50 125"/>
+      <path d="M 50 135 Q 40 140 50 145"/>
+    </g>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">NOTEBOOK</text>
+  </svg>`,
+
+  marker: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#F3E5F5" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#E1BEE7"/>
+    <g transform="rotate(-20 100 100)">
+      <rect x="80" y="50" width="40" height="90" fill="#4A7C59" stroke="#2b2b2b" stroke-width="4" rx="6"/>
+      <rect x="85" y="35" width="30" height="20" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3" rx="3"/>
+      <path d="M 85 140 L 115 140 L 108 160 L 92 160 Z" fill="#2b2b2b" stroke="#2b2b2b" stroke-width="3"/>
+      <ellipse cx="100" cy="160" rx="8" ry="3" fill="#4A7C59"/>
+    </g>
+    <path d="M 40 170 Q 70 160 100 170 Q 130 180 160 170" stroke="#4A7C59" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">MARKER</text>
+  </svg>`,
+
+  scissors: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="200" fill="#FFF3E0" rx="20"/>
+    <circle cx="100" cy="100" r="80" fill="#FFE0B2"/>
+    <g transform="rotate(-30 80 120)">
+      <path d="M 60 80 L 85 140 L 90 138 L 65 78 Z" fill="#B0BEC5" stroke="#2b2b2b" stroke-width="3"/>
+      <path d="M 100 80 L 75 140 L 70 138 L 95 78 Z" fill="#B0BEC5" stroke="#2b2b2b" stroke-width="3"/>
+      <circle cx="80" cy="110" r="5" fill="#2b2b2b"/>
+      <ellipse cx="55" cy="160" rx="14" ry="18" fill="none" stroke="#E26D5C" stroke-width="6"/>
+      <ellipse cx="105" cy="160" rx="14" ry="18" fill="none" stroke="#E26D5C" stroke-width="6"/>
+      <line x1="65" y1="140" x2="55" y2="145" stroke="#2b2b2b" stroke-width="4"/>
+      <line x1="95" y1="140" x2="105" y2="145" stroke="#2b2b2b" stroke-width="4"/>
+    </g>
+    <text x="100" y="185" text-anchor="middle" font-size="18" font-weight="900" fill="#4a5d23" font-family="Arial">SCISSORS</text>
+  </svg>`
+};
+
+// ============================================================
+// CONTENT DATA
+// ============================================================
+const WORDS = [
+  { word:'Reading',     svgKey:'reading',    hint:'reading a book 📖' },
+  { word:'Counting',    svgKey:'counting',   hint:'counting 1, 2, 3 🔢' },
+  { word:'Drawing',     svgKey:'drawing',    hint:'drawing a picture ✏️' },
+  { word:'Gluing',      svgKey:'gluing',     hint:'gluing paper 🧴' },
+  { word:'Coloring',    svgKey:'coloring',   hint:'coloring pictures 🖍️' },
+  { word:'Talking',     svgKey:'talking',    hint:'talking with a friend 💬' },
+  { word:'Erasing',     svgKey:'erasing',    hint:'erasing the board 🧽' },
+  { word:'Listening',   svgKey:'listening',  hint:'listening with your ear 👂' },
+  { word:'Glue',        svgKey:'glue',       hint:'a glue stick 🧴' },
+  { word:'Paintbrush',  svgKey:'paintbrush', hint:'a paintbrush 🖌️' },
+  { word:'Notebook',    svgKey:'notebook',   hint:'a notebook 📓' },
+  { word:'Marker',      svgKey:'marker',     hint:'a marker 🖊️' },
+  { word:'Scissors',    svgKey:'scissors',   hint:'scissors ✂️' }
+];
+
+const SENTENCE_IMAGE = [
+  { sentence:'She is drawing a picture.',         svgKey:'drawing' },
+  { sentence:'He is gluing paper.',               svgKey:'gluing' },
+  { sentence:'They are coloring pictures.',       svgKey:'coloring' },
+  { sentence:'They are talking to the teacher.',  svgKey:'talking' },
+  { sentence:'He is erasing the board.',          svgKey:'erasing' },
+  { sentence:'We are listening to a story.',      svgKey:'listening' },
+  { sentence:'I am reading a book.',              svgKey:'reading' },
+  { sentence:'We are counting crayons.',          svgKey:'counting' },
+  { sentence:'I am cutting with scissors.',       svgKey:'scissors' },
+  { sentence:'I am writing in my notebook.',      svgKey:'notebook' }
+];
+
+const TRUE_FALSE = [
+  { statement:'She is drawing a picture.',       svgKey:'drawing',   isTrue:true  },
+  { statement:'He is reading a book.',           svgKey:'drawing',   isTrue:false },
+  { statement:'They are coloring pictures.',     svgKey:'coloring',  isTrue:true  },
+  { statement:'They are talking to the teacher.',svgKey:'listening', isTrue:false },
+  { statement:'He is erasing the board.',        svgKey:'erasing',   isTrue:true  },
+  { statement:'We are listening to a story.',    svgKey:'talking',   isTrue:false },
+  { statement:'I am using a notebook.',          svgKey:'notebook',  isTrue:true  },
+  { statement:'I am cutting with a marker.',     svgKey:'scissors',  isTrue:false }
+];
+
+const QA_POOL = [
+  { q:'What is she doing?',          a:'She is drawing a picture.',    options:['She is drawing a picture.','She is reading a book.','She is counting crayons.','She is gluing paper.'], correct:0 },
+  { q:'What are they doing?',        a:'They are talking to the teacher.', options:['They are listening to a story.','They are talking to the teacher.','They are coloring pictures.','They are erasing the board.'], correct:1 },
+  { q:'What is he using?',           a:'He is using scissors.',        options:['He is using a marker.','He is using glue.','He is using scissors.','He is using a notebook.'], correct:2 },
+  { q:'What are we counting?',       a:'We are counting crayons.',     options:['We are counting books.','We are counting crayons.','We are counting markers.','We are counting pencils.'], correct:1 },
+  { q:'What is he erasing?',         a:'He is erasing the board.',     options:['He is erasing the notebook.','He is erasing the paper.','He is erasing the desk.','He is erasing the board.'], correct:3 },
+  { q:'What are we listening to?',   a:'We are listening to a story.', options:['We are listening to a song.','We are listening to a story.','We are listening to a movie.','We are listening to a game.'], correct:1 }
+];
+
+const DICTATION = [
+  { sentence:'I am reading a book.' },
+  { sentence:'We are counting crayons.' },
+  { sentence:'She is drawing a picture.' },
+  { sentence:'He is gluing paper.' },
+  { sentence:'They are coloring pictures.' },
+  { sentence:'We are listening to a story.' },
+  { sentence:'I am writing in my notebook.' },
+  { sentence:'I am cutting with scissors.' }
+];
+
+const FILL_GAP = [
+  { full:'I am reading a book.',         missing:'reading',   options:['reading','counting','drawing','gluing'] },
+  { full:'We are counting crayons.',     missing:'counting',  options:['reading','counting','talking','listening'] },
+  { full:'She is drawing a picture.',    missing:'drawing',   options:['drawing','reading','gluing','erasing'] },
+  { full:'He is gluing paper.',          missing:'gluing',    options:['gluing','drawing','counting','coloring'] },
+  { full:'They are coloring pictures.',  missing:'coloring',  options:['coloring','reading','talking','listening'] },
+  { full:'They are talking to the teacher.', missing:'talking', options:['talking','listening','reading','drawing'] },
+  { full:'He is erasing the board.',     missing:'erasing',   options:['erasing','drawing','coloring','gluing'] },
+  { full:'We are listening to a story.', missing:'listening', options:['listening','talking','reading','counting'] },
+  { full:'I am writing in my notebook.', missing:'notebook',  options:['notebook','marker','scissors','glue'] },
+  { full:'I am cutting with scissors.',  missing:'scissors',  options:['scissors','glue','marker','paintbrush'] }
+];
+
+// ============================================================
+// STATE & AUDIO UTILS
+// ============================================================
+const state = {
+  level1:{ idx:0, correct:0, wrong:0, list:[], answered:false },
+  level2:{ idx:0, correct:0, wrong:0, list:[], answered:false },
+  level3:{ idx:0, correct:0, wrong:0, list:[], answered:false },
+  level4:{ idx:0, correct:0, wrong:0, list:[], answered:false },
+  level5:{ idx:0, correct:0, wrong:0, list:[], answered:false },
+  level6:{ idx:0, correct:0, wrong:0, list:[], answered:false }
+};
+
+function speak(text, rate=0.65) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = rate;
+  u.pitch = 1.1;
+  const voices = window.speechSynthesis.getVoices();
+  const enVoice = voices.find(v => v.lang === 'en-US' && v.name.toLowerCase().includes('female'))
+    || voices.find(v => v.lang === 'en-US')
+    || voices.find(v => v.lang.startsWith('en'));
+  if (enVoice) u.voice = enVoice;
+  setTimeout(() => { window.speechSynthesis.speak(u); }, 100);
+}
+window.speechSynthesis && window.speechSynthesis.getVoices();
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function normalize(str){ return str.toLowerCase().replace(/[.,!?;:'"]/g,'').replace(/\s+/g,' ').trim(); }
+function levenshtein(a, b){
+  if(a === b) return 0;
+  const m = a.length, n = b.length;
+  if(m === 0) return n;
+  if(n === 0) return m;
+  const dp = Array.from({length:m+1}, () => new Array(n+1).fill(0));
+  for(let i=0;i<=m;i++) dp[i][0] = i;
+  for(let j=0;j<=n;j++) dp[0][j] = j;
+  for(let i=1;i<=m;i++){
+    for(let j=1;j<=n;j++){
+      const cost = a[i-1] === b[j-1] ? 0 : 1;
+      dp[i][j] = Math.min(dp[i-1][j]+1, dp[i][j-1]+1, dp[i-1][j-1]+cost);
+    }
+  }
+  return dp[m][n];
+}
+function dictationScore(target, typed){
+  const t = normalize(target).split(' ').filter(Boolean);
+  const h = normalize(typed).split(' ').filter(Boolean);
+  if(t.length === 0) return 0;
+  const used = new Array(h.length).fill(false);
+  let score = 0;
+  t.forEach(tw => {
+    let best = -1, bestDist = 999;
+    for(let j=0;j<h.length;j++){
+      if(used[j]) continue;
+      const d = levenshtein(tw, h[j]);
+      if(d < bestDist){ bestDist = d; best = j; }
+    }
+    const maxDist = tw.length <= 4 ? 1 : 2;
+    if(best !== -1 && bestDist <= maxDist){
+      used[best] = true;
+      score += (bestDist === 0 ? 1 : 0.7);
+    }
+  });
+  return score / t.length;
+}
+
+function playDing(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [880, 1320].forEach((freq, i)=>{
+      const osc = ctx.createOscillator(); const gain = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.value = freq;
+      const start = ctx.currentTime + i*0.09;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.2, start+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start+0.25);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(start); osc.stop(start+0.28);
+    });
+  }catch(e){}
+}
+function playBuzz(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator(); const gain = ctx.createGain();
+    osc.type = 'sawtooth'; osc.frequency.value = 130;
+    const start = ctx.currentTime;
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(0.15, start+0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start+0.35);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(start); osc.stop(start+0.38);
+  }catch(e){}
+}
+
+// NAVIGATION
+const phaseBtns = document.querySelectorAll('.phase-btn');
+const phases = document.querySelectorAll('.phase');
+function goToPhase(n){
+  phases.forEach(p => p.classList.remove('active'));
+  phaseBtns.forEach(b => b.classList.remove('active'));
+  document.getElementById('phase'+n).classList.add('active');
+  document.querySelector(`.phase-btn[data-phase="${n}"]`).classList.add('active');
+  document.getElementById('topProgress').style.width = (n/7*100)+'%';
+  window.scrollTo({top:0, behavior:'smooth'});
+  if(n == 7) renderFinalNote();
+}
+phaseBtns.forEach(btn=>{ btn.addEventListener('click', ()=> goToPhase(parseInt(btn.dataset.phase))); });
+
+function panelHeader(levelKey, index, total){
+  const st = state[levelKey];
+  return `
+    <div class="al-top">
+      <div class="al-num">${index+1} / ${total}</div>
+      <div class="al-score-box">
+        <span class="good">✅ ${st.correct}</span>
+        <span class="bad">❌ ${st.wrong}</span>
+      </div>
+    </div>`;
+}
+
+// ============================================================
+// LEVEL 1 — VOCABULARY (CORREGIDO)
+// ============================================================
+function initLevel1(){
+  state.level1 = { idx:0, correct:0, wrong:0, list:shuffle(WORDS), answered:false };
+  loadLevel1();
+}
+
+function loadLevel1(){
+  const st = state.level1;
+  if(st.idx >= st.list.length) return completeSection('area1','level1','Level 1 — Vocabulary', 2);
+
+  st.answered = false;
+  const item = st.list[st.idx];
+  const correctSvgKey = item.svgKey;
+
+  const others = WORDS.filter(w => w.svgKey !== correctSvgKey);
+  const distractors = shuffle(others).slice(0, 3);
+  const options = shuffle([item, ...distractors]);
+
+  document.getElementById('area1').innerHTML = `
+    <div class="al-panel">
+      ${panelHeader('level1', st.idx, st.list.length)}
+      <div class="al-context"><strong>📖 VOCABULARY — READ &amp; LISTEN</strong>Leé la palabra, escuchá y elegí la imagen correcta.</div>
+
+      <div class="big-word-card">
+        <div class="word-display">${item.word}</div>
+        <div class="word-hint">${item.hint}</div>
+      </div>
+
+      <button class="al-big-speak pulsing" onclick="speak('${item.word}')">🔊</button>
+
+      <div class="al-instruction" style="margin-top:14px;">Choose the correct picture</div>
+      <div class="al-subinstruction">Tocá la imagen que corresponde a la palabra</div>
+
+      <div class="al-images" id="images">
+        ${options.map(o => `<div class="al-img-card" data-key="${o.svgKey}">${SVG_ICONS[o.svgKey]}</div>`).join('')}
+      </div>
+      <div class="al-feedback" id="feedback"></div>
+    </div>`;
+
+  setTimeout(()=> speak(item.word), 600);
+
+  const cards = document.querySelectorAll('#images .al-img-card');
+  cards.forEach(card => {
+    card.onclick = ()=>{
+      if(st.answered) return;
+      st.answered = true;
+      
+      const chosen = card.getAttribute('data-key'); // <- FIX: getAttribute en vez de dataset
+      
+      const feedback = document.getElementById('feedback');
+      if(chosen === correctSvgKey){
+        card.classList.add('correct');
+        st.correct++;
+        feedback.textContent = `✅ ¡Muy bien! "${item.word}" es correcto.`;
+        feedback.className = 'al-feedback ok';
+        playDing();
+        setTimeout(()=>{ st.idx++; loadLevel1(); }, 1500);
+      } else {
+        card.classList.add('wrong');
+        st.wrong++;
+        cards.forEach(c => { if(c.getAttribute('data-key') === correctSvgKey) c.classList.add('correct'); });
+        feedback.textContent = `❌ Era "${item.word}"`;
+        feedback.className = 'al-feedback bad';
+        playBuzz();
+        setTimeout(()=>{ st.idx++; loadLevel1(); }, 2400);
+      }
+    };
+  });
+}
+
+// ============================================================
+// LEVEL 2 — SENTENCE → IMAGE (CORREGIDO)
+// ============================================================
+function initLevel2(){
+  state.level2 = { idx:0, correct:0, wrong:0, list:shuffle(SENTENCE_IMAGE), answered:false };
+  loadLevel2();
+}
+
+function loadLevel2(){
+  const st = state.level2;
+  if(st.idx >= st.list.length) return completeSection('area2','level2','Level 2 — Sentence → Image', 3);
+
+  st.answered = false;
+  const item = st.list[st.idx];
+  const correctSvgKey = item.svgKey;
+
+  const others = SENTENCE_IMAGE.filter(s => s.svgKey !== correctSvgKey);
+  const distractors = shuffle(others).slice(0, 3);
+  const options = shuffle([item, ...distractors]);
+
+  document.getElementById('area2').innerHTML = `
+    <div class="al-panel">
+      ${panelHeader('level2', st.idx, st.list.length)}
+      <div class="al-context"><strong>🎧 LISTEN &amp; PICK</strong>Escuchá la oración completa y elegí la imagen correcta.</div>
+      <div class="al-instruction">Click the image that matches the sentence</div>
+      <div class="al-subinstruction">Audio lento para ayudarte 🐢</div>
+      <button class="al-big-speak pulsing" onclick="speak('${item.sentence}')">🔊</button>
+      <div class="al-images" id="images">
+        ${options.map(o => `<div class="al-img-card" data-key="${o.svgKey}">${SVG_ICONS[o.svgKey]}</div>`).join('')}
+      </div>
+      <div class="al-feedback" id="feedback"></div>
+    </div>`;
+
+  setTimeout(()=> speak(item.sentence), 600);
+
+  const cards = document.querySelectorAll('#images .al-img-card');
+  cards.forEach(card => {
+    card.onclick = ()=>{
+      if(st.answered) return;
+      st.answered = true;
+      
+      const chosen = card.getAttribute('data-key'); // <- FIX
+      
+      const feedback = document.getElementById('feedback');
+      if(chosen === correctSvgKey){
+        card.classList.add('correct');
+        st.correct++;
+        feedback.textContent = `✅ ¡Correcto! "${item.sentence}"`;
+        feedback.className = 'al-feedback ok';
+        playDing();
+        setTimeout(()=>{ st.idx++; loadLevel2(); }, 1500);
+      } else {
+        card.classList.add('wrong');
+        st.wrong++;
+        cards.forEach(c => { if(c.getAttribute('data-key') === correctSvgKey) c.classList.add('correct'); });
+        feedback.textContent = `❌ Era "${item.sentence}"`;
+        feedback.className = 'al-feedback bad';
+        playBuzz();
+        setTimeout(()=>{ st.idx++; loadLevel2(); }, 2400);
+      }
+    };
+  });
+}
+
+// ============================================================
+// LEVEL 3 — TRUE OR FALSE (CORREGIDO)
+// ============================================================
+function initLevel3(){
+  state.level3 = { idx:0, correct:0, wrong:0, list:shuffle(TRUE_FALSE), answered:false };
+  loadLevel3();
+}
+
+function loadLevel3(){
+  const st = state.level3;
+  if(st.idx >= st.list.length) return completeSection('area3','level3','Level 3 — True or False', 4);
+
+  st.answered = false;
+  const item = st.list[st.idx];
+
+  document.getElementById('area3').innerHTML = `
+    <div class="al-panel">
+      ${panelHeader('level3', st.idx, st.list.length)}
+      <div class="al-context"><strong>🎧 TRUE OR FALSE</strong>Mirá la imagen, escuchá la oración y decidí.</div>
+      <div class="al-instruction">Is the sentence TRUE or FALSE?</div>
+      <div class="al-subinstruction">La oración describe lo que ves en la imagen</div>
+      <button class="al-big-speak pulsing" onclick="speak('${item.statement}')">🔊</button>
+      <div style="max-width:300px;margin:14px auto 0;aspect-ratio:1;border:4px solid var(--cream-dark);border-radius:20px;overflow:hidden;background:#fff;">
+        ${SVG_ICONS[item.svgKey]}
+      </div>
+      <div class="tf-buttons" id="tfButtons">
+        <button class="tf-btn" data-val="true">✅ True</button>
+        <button class="tf-btn" data-val="false">❌ False</button>
+      </div>
+      <div class="al-feedback" id="feedback"></div>
+    </div>`;
+
+  setTimeout(()=> speak(item.statement), 600);
+
+  const btns = document.querySelectorAll('#tfButtons .tf-btn');
+  btns.forEach(btn => {
+    btn.onclick = ()=>{
+      if(st.answered) return;
+      st.answered = true;
+      
+      const chosen = btn.getAttribute('data-val') === 'true'; // <- FIX
+      
+      const feedback = document.getElementById('feedback');
+      if(chosen === item.isTrue){
+        btn.classList.add('correct');
+        st.correct++;
+        feedback.textContent = `✅ ¡Correcto! Era ${item.isTrue ? 'Verdadero' : 'Falso'}.`;
+        feedback.className = 'al-feedback ok';
+        playDing();
+        setTimeout(()=>{ st.idx++; loadLevel3(); }, 1500);
+      } else {
+        btn.classList.add('wrong');
+        st.wrong++;
+        btns.forEach(b => {
+          if((b.getAttribute('data-val') === 'true') === item.isTrue) b.classList.add('correct');
+        });
+        feedback.textContent = `❌ Era ${item.isTrue ? 'Verdadero' : 'Falso'}`;
+        feedback.className = 'al-feedback bad';
+        playBuzz();
+        setTimeout(()=>{ st.idx++; loadLevel3(); }, 2400);
+      }
+    };
+  });
+}
+
+// ============================================================
+// LEVEL 4 — Q&A (CORREGIDO)
+// ============================================================
+function initLevel4(){
+  state.level4 = { idx:0, correct:0, wrong:0, list:shuffle(QA_POOL), answered:false };
+  loadLevel4();
+}
+
+function loadLevel4(){
+  const st = state.level4;
+  if(st.idx >= st.list.length) return completeSection('area4','level4','Level 4 — Listen & Answer', 5);
+
+  st.answered = false;
+  const item = st.list[st.idx];
+  const letters = ['A','B','C','D'];
+
+  document.getElementById('area4').innerHTML = `
+    <div class="al-panel">
+      ${panelHeader('level4', st.idx, st.list.length)}
+      <div class="al-context"><strong>🎧 LISTEN &amp; ANSWER</strong>Escuchá la pregunta y elegí la respuesta correcta.</div>
+      <div class="al-instruction">Listen and choose the correct answer</div>
+      <div class="al-subinstruction">Prestá atención al verbo y al sujeto</div>
+      <button class="al-big-speak pulsing" onclick="speak('${item.q}')">🔊</button>
+      <div class="al-options" id="options">
+        ${item.options.map((opt, i) => `
+          <div class="al-opt" data-i="${i}">
+            <span class="lo-letter">${letters[i]}</span>
+            <span>${opt}</span>
+          </div>`).join('')}
+      </div>
+      <div class="al-feedback" id="feedback"></div>
+    </div>`;
+
+  setTimeout(()=> speak(item.q), 600);
+
+  const opts = document.querySelectorAll('#options .al-opt');
+  opts.forEach(o => {
+    o.onclick = ()=>{
+      if(st.answered) return;
+      st.answered = true;
+      
+      const chosen = parseInt(o.getAttribute('data-i')); // <- FIX
+      
+      const feedback = document.getElementById('feedback');
+      if(chosen === item.correct){
+        o.classList.add('correct');
+        st.correct++;
+        feedback.textContent = `✅ ¡Correcto! "${item.a}"`;
+        feedback.className = 'al-feedback ok';
+        playDing();
+        opts.forEach(x => x.style.pointerEvents = 'none');
+        setTimeout(()=>{ st.idx++; loadLevel4(); }, 1600);
+      } else {
+        o.classList.add('wrong');
+        st.wrong++;
+        opts.forEach(x => {
+          if(parseInt(x.getAttribute('data-i')) === item.correct) x.classList.add('correct');
+          x.style.pointerEvents = 'none';
+        });
+        feedback.textContent = `❌ Respuesta correcta: "${item.a}"`;
+        feedback.className = 'al-feedback bad';
+        playBuzz();
+        setTimeout(()=>{ st.idx++; loadLevel4(); }, 2400);
+      }
+    };
+  });
+}
+
+// ============================================================
+// LEVEL 5 — DICTATION
+// ============================================================
+function initLevel5(){
+  state.level5 = { idx:0, correct:0, wrong:0, list:shuffle(DICTATION), answered:false };
+  loadLevel5();
+}
+
+function loadLevel5(){
+  const st = state.level5;
+  if(st.idx >= st.list.length) return completeSection('area5','level5','Level 5 — Dictation', 6);
+
+  st.answered = false;
+  const item = st.list[st.idx];
+
+  document.getElementById('area5').innerHTML = `
+    <div class="al-panel">
+      ${panelHeader('level5', st.idx, st.list.length)}
+      <div class="al-context"><strong>🎧 DICTATION</strong>Escuchá la oración y escribila.</div>
+      <div class="al-instruction">Listen and type what you hear</div>
+      <div class="al-subinstruction">Se toleran errores pequeños ✍️</div>
+      <button class="al-big-speak pulsing" onclick="speak('${item.sentence}')">🔊</button>
+      <div style="margin-top:14px;">
+        <input type="text" class="dictation-input" id="dictInput" placeholder="Escribí lo que escuchás..." autocomplete="off" spellcheck="false" />
+      </div>
+      <button class="check-btn" onclick="checkDictation()">✓ Check</button>
+      <div class="al-feedback" id="feedback"></div>
+      <div id="revealArea" style="margin-top:16px;font-size:14px;color:var(--forest-dark);font-weight:700;"></div>
+    </div>`;
+
+  setTimeout(()=> speak(item.sentence), 600);
+
+  document.getElementById('dictInput').addEventListener('keydown', e => { if(e.key === 'Enter') checkDictation(); });
+}
+
+function checkDictation(){
+  const st = state.level5;
+  if(st.answered) return;
+  const item = st.list[st.idx];
+  const input = document.getElementById('dictInput');
+  const feedback = document.getElementById('feedback');
+  const revealArea = document.getElementById('revealArea');
+
+  const typed = input.value.trim();
+  if(!typed){
+    feedback.textContent = '⚠️ Escribí algo antes de verificar.';
+    feedback.className = 'al-feedback bad';
+    return;
+  }
+  st.answered = true;
+  const score = dictationScore(item.sentence, typed);
+  const pct = Math.round(score * 100);
+
+  if(score >= 0.8){
+    input.classList.add('correct');
+    st.correct++;
+    feedback.textContent = `🎉 ¡Excelente! ${pct}% de precisión.`;
+    feedback.className = 'al-feedback ok';
+    playDing();
+    setTimeout(()=>{ st.idx++; loadLevel5(); }, 1600);
+  } else if(score >= 0.5){
+    input.classList.add('correct');
+    st.correct++;
+    feedback.textContent = `👍 ¡Buen intento! ${pct}%`;
+    feedback.className = 'al-feedback ok';
+    playDing();
+    revealArea.innerHTML = `<span style="color:var(--muted);">Correcto:</span> "${item.sentence}"`;
+    setTimeout(()=>{ st.idx++; loadLevel5(); }, 2200);
+  } else {
+    input.classList.add('wrong');
+    st.wrong++;
+    feedback.textContent = `❌ Solo ${pct}%. Escuchá otra vez.`;
+    feedback.className = 'al-feedback bad';
+    playBuzz();
+    revealArea.innerHTML = `<span style="color:var(--muted);">Correcto:</span> "${item.sentence}"`;
+    setTimeout(()=>{ st.idx++; loadLevel5(); }, 2600);
+  }
+}
+
+// ============================================================
+// LEVEL 6 — FILL THE GAP (CORREGIDO)
+// ============================================================
+function initLevel6(){
+  state.level6 = { idx:0, correct:0, wrong:0, list:shuffle(FILL_GAP), answered:false };
+  loadLevel6();
+}
+
+function loadLevel6(){
+  const st = state.level6;
+  if(st.idx >= st.list.length) return completeSection('area6','level6','Level 6 — Fill the Gap', 7);
+
+  st.answered = false;
+  const item = st.list[st.idx];
+  const letters = ['A','B','C','D'];
+  const opts = shuffle(item.options);
+
+  const parts = item.full.split(item.missing);
+  const sentenceHTML = `${parts[0]}<span style="display:inline-block;min-width:100px;border-bottom:3px solid var(--gold);color:var(--gold-dark);text-align:center;font-weight:900;">_____</span>${parts[1] || ''}`;
+
+  document.getElementById('area6').innerHTML = `
+    <div class="al-panel">
+      ${panelHeader('level6', st.idx, st.list.length)}
+      <div class="al-context"><strong>🎧 FILL THE GAP</strong>Escuchá la oración completa y elegí la palabra que falta.</div>
+      <div class="al-instruction">Listen and choose the missing word</div>
+      <div class="al-subinstruction">La palabra oculta está en las opciones</div>
+      <button class="al-big-speak pulsing" onclick="speak('${item.full}')">🔊</button>
+      <div style="font-size:20px;font-weight:800;color:var(--forest-dark);margin:20px 0;line-height:1.5;">
+        ${sentenceHTML}
+      </div>
+      <div class="al-options" id="options">
+        ${opts.map((opt, i) => `
+          <div class="al-opt" data-val="${opt}">
+            <span class="lo-letter">${letters[i]}</span>
+            <span>${opt}</span>
+          </div>`).join('')}
+      </div>
+      <div class="al-feedback" id="feedback"></div>
+    </div>`;
+
+  setTimeout(()=> speak(item.full), 600);
+
+  const optEls = document.querySelectorAll('#options .al-opt');
+  optEls.forEach(o => {
+    o.onclick = ()=>{
+      if(st.answered) return;
+      st.answered = true;
+      
+      const chosen = o.getAttribute('data-val'); // <- FIX
+      
+      const feedback = document.getElementById('feedback');
+      if(chosen === item.missing){
+        o.classList.add('correct');
+        st.correct++;
+        feedback.textContent = `✅ ¡Correcto! La palabra era "${item.missing}"`;
+        feedback.className = 'al-feedback ok';
+        playDing();
+        optEls.forEach(x => x.style.pointerEvents = 'none');
+        setTimeout(()=>{ st.idx++; loadLevel6(); }, 1500);
+      } else {
+        o.classList.add('wrong');
+        st.wrong++;
+        optEls.forEach(x => {
+          if(x.getAttribute('data-val') === item.missing) x.classList.add('correct');
+          x.style.pointerEvents = 'none';
+        });
+        feedback.textContent = `❌ La palabra correcta era "${item.missing}"`;
+        feedback.className = 'al-feedback bad';
+        playBuzz();
+        setTimeout(()=>{ st.idx++; loadLevel6(); }, 2400);
+      }
+    };
+  });
+}
+
+// ============================================================
+// COMPLETE SECTION & FINAL
+// ============================================================
+function completeSection(areaId, levelKey, name, nextPhase){
+  const st = state[levelKey];
+  const total = st.correct + st.wrong;
+  const pct = total > 0 ? Math.round((st.correct / total) * 100) : 0;
+  const passed = pct >= 80;
+
+  document.getElementById(areaId).innerHTML = `
+    <div class="al-panel section-complete ${passed ? 'pass' : 'fail'}">
+      <div style="font-size:72px;">${passed ? '🏆' : '🔄'}</div>
+      <h3>${passed ? `¡${name} completado!` : '❌ Necesitás 80% para pasar'}</h3>
+      <div class="score-big">${pct}%</div>
+      <div class="score-sub">✅ Aciertos: ${st.correct} &nbsp;|&nbsp; ❌ Fallos: ${st.wrong}</div>
+      ${passed
+        ? `<button class="nav-btn" onclick="goToPhase(${nextPhase})">Continuar →</button>`
+        : `<button class="restart-btn" onclick="retrySection('${levelKey}')">🔄 Repetir sección</button>`}
+    </div>`;
+}
+
+function retrySection(levelKey){
+  const inits = { level1:initLevel1, level2:initLevel2, level3:initLevel3, level4:initLevel4, level5:initLevel5, level6:initLevel6 };
+  inits[levelKey]();
+}
+
+function renderFinalNote(){
+  const levels = [
+    { label:'Level 1 · Vocabulary',    key:'level1', max:WORDS.length },
+    { label:'Level 2 · Sentence→Image',key:'level2', max:SENTENCE_IMAGE.length },
+    { label:'Level 3 · True/False',    key:'level3', max:TRUE_FALSE.length },
+    { label:'Level 4 · Q&A',           key:'level4', max:QA_POOL.length },
+    { label:'Level 5 · Dictation',     key:'level5', max:DICTATION.length },
+    { label:'Level 6 · Fill Gap',      key:'level6', max:FILL_GAP.length }
+  ];
+
+  let totalCorrect = 0, totalWrong = 0;
+  const breakdown = levels.map(l => {
+    const st = state[l.key];
+    totalCorrect += st.correct;
+    totalWrong += st.wrong;
+    return { ...l, correct: st.correct, wrong: st.wrong };
+  });
+
+  const total = totalCorrect + totalWrong;
+  const finalPct = total > 0 ? Math.round((totalCorrect / total) * 100) : 0;
+  const passed = finalPct >= 80;
+
+  let nota = '1.0';
+  let message = '';
+  let messageClass = '';
+  if(finalPct >= 95){ nota = '10'; message = '🏆 ¡Perfecto! Eres una estrella del listening. 🌟'; messageClass = 'pass'; }
+  else if(finalPct >= 90){ nota = '9'; message = '🌟 ¡Excelente! Escuchás súper bien. 👏'; messageClass = 'pass'; }
+  else if(finalPct >= 85){ nota = '8'; message = '⭐ ¡Muy bien! Tenés muy buen oído. 🎧'; messageClass = 'pass'; }
+  else if(finalPct >= 80){ nota = '7'; message = '✅ ¡Aprobado! Buen trabajo. 🎉'; messageClass = 'pass'; }
+  else if(finalPct >= 65){ nota = '5'; message = '⚠️ Casi lo lográs. Repetí los niveles más bajos. 💪'; messageClass = ''; }
+  else { nota = '1.0 - 4.9'; message = '🔴 No aprobaste todavía. Repetí el AudioLab desde el nivel 1. 🌱'; messageClass = 'fail'; }
+
+  document.getElementById('finalArea').innerHTML = `
+    <div class="final-card">
+      <h3>AudioLab Kids — Nota Final</h3>
+      <div class="final-score-big" style="color:${passed ? 'var(--green-ok)' : 'var(--red-bad)'};">${finalPct}%</div>
+      <div class="final-score-sub">✅ ${totalCorrect} aciertos · ❌ ${totalWrong} fallos</div>
+      <div style="font-size:40px;font-weight:900;color:var(--gold-dark);margin:16px 0;">NOTA: ${nota}</div>
+      <div class="final-message ${messageClass}">${message}</div>
+      <div class="final-breakdown">
+        ${breakdown.map(r => {
+          const pct = r.max > 0 ? Math.round((r.correct / r.max) * 100) : 0;
+          return `
+            <div class="fb-row">
+              <div class="fb-label">${r.label}</div>
+              <div class="fb-bar-outer"><div class="fb-bar-inner" style="width:${pct}%;"></div></div>
+              <div class="fb-val">${r.correct}/${r.max}</div>
+            </div>`;
+        }).join('')}
+      </div>
+      <button class="restart-btn" onclick="resetAll()">🎧 Repetir AudioLab</button>
+    </div>`;
+}
+
+function resetAll(){
+  initLevel1(); initLevel2(); initLevel3(); initLevel4(); initLevel5(); initLevel6();
+  goToPhase(1);
+}
+
+// INIT
+initLevel1();
+initLevel2();
+initLevel3();
+initLevel4();
+initLevel5();
+initLevel6();
+goToPhase(1);
+</script>
+</body>
+</html>
